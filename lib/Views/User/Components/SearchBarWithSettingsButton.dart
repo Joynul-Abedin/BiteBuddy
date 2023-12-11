@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../Utility/Utility.dart';
+import '../../../Utility/Utility.dart';
+
 
 class SearchBarWithSettingsButton extends StatelessWidget {
   const SearchBarWithSettingsButton({super.key});

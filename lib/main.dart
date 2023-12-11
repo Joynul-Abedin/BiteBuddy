@@ -1,9 +1,10 @@
+import 'package:bite_buddy/Views/Admin/AdminHomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'Database/DatabaseHelper.dart';
 import 'Utility/SharedPreference.dart';
-import 'Views/HomePage.dart';
+import 'Views/User/HomePage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
+      // home: const AdminHomePage(),
       home: const RecipeHelper(),
     );
   }

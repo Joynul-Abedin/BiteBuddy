@@ -7,12 +7,12 @@ import 'package:http/http.dart' as http;
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../Database/DatabaseHelper.dart';
-import '../Google Ads/BannerAds.dart';
-import '../Model/Meal.dart';
-import '../Model/MealDetails.dart';
-import '../Utility/AddUtility.dart';
-import '../Utility/Utility.dart';
+import '../../Database/DatabaseHelper.dart';
+import '../../Google Ads/BannerAds.dart';
+import '../../Model/Meal.dart';
+import '../../Model/MealDetails.dart';
+import '../../Utility/AddUtility.dart';
+import '../../Utility/Utility.dart';
 
 class MealDetailsPage extends StatefulWidget {
   final Meal meal;

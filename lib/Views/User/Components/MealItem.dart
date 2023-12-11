@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../Model/Meal.dart';
-import '../../Utility/Utility.dart';
+import '../../../Model/Meal.dart';
+import '../../../Utility/Utility.dart';
 import '../MealDetailsPage.dart';
 
 class MealItem extends StatelessWidget {

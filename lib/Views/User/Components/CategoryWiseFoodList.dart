@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 
-import '../../Database/DatabaseHelper.dart';
-import '../../Google Ads/BannerAds.dart';
-import '../../Model/Category.dart';
-import '../../Model/Meal.dart';
-import '../../Utility/AddUtility.dart';
-import '../../Utility/Utility.dart';
+import '../../../Database/DatabaseHelper.dart';
+import '../../../Google Ads/BannerAds.dart';
+import '../../../Model/Category.dart';
+import '../../../Model/Meal.dart';
+import '../../../Utility/AddUtility.dart';
+import '../../../Utility/Utility.dart';
 import 'MealItem.dart';
 
 class CategoryWiseFoodList extends StatefulWidget {

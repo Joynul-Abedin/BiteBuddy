@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 
-import '../Database/DatabaseHelper.dart';
-import '../Google Ads/BannerAds.dart';
-import '../Model/Category.dart';
-import '../Utility/AddUtility.dart';
-import '../Utility/Utility.dart';
+import '../../Database/DatabaseHelper.dart';
+import '../../Google Ads/BannerAds.dart';
+import '../../Model/Category.dart';
+import '../../Model/FooItem.dart';
+import '../../Utility/AddUtility.dart';
+import '../../Utility/Utility.dart';
 import 'Components/CategoryItem.dart';
 import 'Components/SearchBarWithSettingsButton.dart';
 
@@ -22,52 +23,26 @@ class RecipeHelper extends StatefulWidget {
 class _RecipeHelperState extends State<RecipeHelper> {
   late Future<List<Category>> categories;
   BannerAd banner = AddUtility().myBanner;
+  late Future<List<FoodItem>> foodItems;
 
-  Future<List<Category>> fetchCategories() async {
-    // First, try to load from the local database
-    List<Category> localCategories = await getCategories();
-
-    if (localCategories.isNotEmpty) {
-      debugPrint("Categories from local database");
-      return localCategories; // Return local data if available
-    }
-
-    // If not available locally, fetch from the API
-    final response = await http.get(Uri.parse(Utility.Categories));
+  Future<List<FoodItem>> fetchFoodItems() async {
+    var response = await http.get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'));
 
     if (response.statusCode == 200) {
-      List categoriesJson = json.decode(response.body)['categories'];
-      List<Category> categories =
-          categoriesJson.map((json) => Category.fromJson(json)).toList();
-
-      // Convert categories to a list of maps
-      List<Map<String, dynamic>> categoryMaps =
-          categories.map((category) => category.toMap()).toList();
-
-      // Insert all categories into the local database
-      await DatabaseHelper.instance.inserAllCategory(categoryMaps);
-      List<Category> localCategoriesAfterInsert = await getCategories();
-      return localCategoriesAfterInsert;
+      List foodItemJson = json.decode(response.body);
+      List<FoodItem> foodItem =
+      foodItemJson.map((json) => FoodItem.fromJson(json)).toList();
+      return foodItem;
     } else {
       throw Exception('Failed to load categories');
     }
-  }
-
-  Future<List<Category>> getCategories() async {
-    DatabaseHelper db = DatabaseHelper.instance;
-    List<Map<String, dynamic>> maps = await db.queryAllCategories();
-
-    if (maps.isNotEmpty) {
-      return maps.map((map) => Category.fromJson(map)).toList();
-    }
-    return [];
   }
 
   @override
   void initState() {
     super.initState();
     banner.load();
-    categories = fetchCategories();
+    foodItems = fetchFoodItems();
   }
 
   @override
@@ -132,8 +107,8 @@ class _RecipeHelperState extends State<RecipeHelper> {
                 ],
               ),
               Expanded(
-                child: FutureBuilder<List<Category>>(
-                  future: categories,
+                child: FutureBuilder<List<FoodItem>>(
+                  future: foodItems,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return GridView.builder(
@@ -144,7 +119,7 @@ class _RecipeHelperState extends State<RecipeHelper> {
                         ),
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          return CategoryItem(category: snapshot.data![index]);
+                          return FoodItemUserView(foodItem: snapshot.data![index]);
                         },
                       );
                     } else if (snapshot.hasError) {
