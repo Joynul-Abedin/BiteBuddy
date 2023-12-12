@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:bite_buddy/Model/FooItem.dart';
@@ -15,6 +16,7 @@ class AdminHomePage extends StatefulWidget {
 }
 
 class _AdminHomePageState extends State<AdminHomePage> {
+  late Timer dataFetchTimer;
   // Controllers for text fields
   TextEditingController nameController = TextEditingController();
   TextEditingController pictureUrlController = TextEditingController();
@@ -28,23 +30,32 @@ class _AdminHomePageState extends State<AdminHomePage> {
   TextEditingController searchController = TextEditingController();
 
   Future<List<FoodItem>> fetchFoodItems() async {
-    var response = await http.get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'));
+    var response = await http
+        .get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'));
 
     if (response.statusCode == 200) {
       List foodItemJson = json.decode(response.body);
       List<FoodItem> foodItem =
-      foodItemJson.map((json) => FoodItem.fromJson(json)).toList();
+          foodItemJson.map((json) => FoodItem.fromJson(json)).toList();
       return foodItem;
     } else {
       throw Exception('Failed to load categories');
     }
   }
 
+  startTimerDataFetch() {
+    dataFetchTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      setState(() {
+        foodItems = fetchFoodItems();
+      });
+    });
+  }
+
   @override
   void dispose() {
     searchController.dispose();
     super.dispose();
-
+    dataFetchTimer.cancel();
   }
 
   @override
@@ -52,6 +63,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     // TODO: implement initState
     super.initState();
     foodItems = fetchFoodItems();
+    startTimerDataFetch();
   }
 
   @override
@@ -90,7 +102,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   return GridView.builder(
                     padding: const EdgeInsets.all(0),
                     gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                     ),
                     itemCount: snapshot.data!.length,
@@ -112,79 +124,76 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   void openAddFoodItemDialog() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-              ),
-              TextField(
-                controller: pictureUrlController,
-                decoration: const InputDecoration(labelText: 'Picture URL'),
-              ),
-              TextField(
-                controller: priceController,
-                decoration: const InputDecoration(labelText: 'Price'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: quantityController,
-                decoration: const InputDecoration(labelText: 'Quantity'),
-                keyboardType: TextInputType.number,
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                maxLines: 3,
-              ),
-              ElevatedButton(
-                child: const Text('Add Item'),
-                onPressed: () async {
-                  if (nameController.text.isNotEmpty &&
-                      pictureUrlController.text.isNotEmpty &&
-                      priceController.text.isNotEmpty &&
-                      quantityController.text.isNotEmpty &&
-                      descriptionController.text.isNotEmpty) {
-                    var response = await http.post(
-                      Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'),
-                      headers: {
-                        'Content-Type': 'application/json; charset=UTF-8',
-                      },
-                      body: jsonEncode({
-                        'name': nameController.text,
-                        'pictureUrl': pictureUrlController.text,
-                        'price': double.parse(priceController.text),
-                        'quantity': int.parse(quantityController.text),
-                        'description': descriptionController.text,
-                      }),
-                    );
+    showAboutDialog(context: context, children: [
+      Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Name'),
+            ),
+            TextField(
+              controller: pictureUrlController,
+              decoration: const InputDecoration(labelText: 'Picture URL'),
+            ),
+            TextField(
+              controller: priceController,
+              decoration: const InputDecoration(labelText: 'Price'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: quantityController,
+              decoration: const InputDecoration(labelText: 'Quantity'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: 'Description'),
+              maxLines: 3,
+            ),
+            ElevatedButton(
+              child: const Text('Add Item'),
+              onPressed: () async {
+                if (nameController.text.isNotEmpty &&
+                    pictureUrlController.text.isNotEmpty &&
+                    priceController.text.isNotEmpty &&
+                    quantityController.text.isNotEmpty &&
+                    descriptionController.text.isNotEmpty) {
+                  var response = await http.post(
+                    Uri.parse(
+                        'https://bitebuddy-nydw.onrender.com/api/v1/food-item'),
+                    headers: {
+                      'Content-Type': 'application/json; charset=UTF-8',
+                    },
+                    body: jsonEncode({
+                      'name': nameController.text,
+                      'pictureUrl': pictureUrlController.text,
+                      'price': double.parse(priceController.text),
+                      'quantity': int.parse(quantityController.text),
+                      'description': descriptionController.text,
+                    }),
+                  );
 
-                    if (response.statusCode == 200) {
-                      // Handle successful response
-                      print('Food item added successfully');
-                    } else {
-                      // Handle error response
-                      print('Failed to add food item');
-                    }
-
-                    Navigator.pop(context); // Close the bottom sheet
+                  if (response.statusCode == 200) {
+                    // Handle successful response
+                    print('Food item added successfully');
                   } else {
-                    // Handle validation failure
-                    print('Validation failed');
+                    // Handle error response
+                    print('Failed to add food item');
                   }
-                },
-              ),
 
-            ],
-          ),
-        );
-      },
-    );
+                  Navigator.pop(context); // Close the bottom sheet
+                } else {
+                  // Handle validation failure
+                  print('Validation failed');
+                }
+              },
+            ),
+          ],
+        ),
+      )
+    ]);
   }
 }

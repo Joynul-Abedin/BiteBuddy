@@ -10,12 +10,12 @@ class UserPreferences {
 
   UserPreferences._internal();
 
-  Future<void> init() async {
+ init() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
   // Setter with key and value
-  Future<void> setStringValue(String key, String value) async {
+  setStringValue(String key, String value) async {
     await _prefs.setString(key, value);
   }
 
@@ -25,7 +25,7 @@ class UserPreferences {
   }
 
   // Setter with key and value
-  Future<void> setBoolValue(String key, bool value) async {
+  setBoolValue(String key, bool value) async {
     await _prefs.setBool(key, value);
   }
 

@@ -1,15 +1,15 @@
-import 'package:bite_buddy/Views/Admin/AdminHomePage.dart';
+import 'package:bite_buddy/Views/Login/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'Database/DatabaseHelper.dart';
 import 'Utility/SharedPreference.dart';
-import 'Views/User/HomePage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await UserPreferences().init();
   MobileAds.instance.initialize().then((InitializationStatus status) {
-    print('Initialization done: ${status.adapterStatuses}');
+    debugPrint('Initialization done: ${status.adapterStatuses}');
     MobileAds.instance.updateRequestConfiguration(
       RequestConfiguration(
         testDeviceIds: <String>[
@@ -20,7 +20,7 @@ Future<void> main() async {
     );
   });
   runApp(const MyApp());
-  await UserPreferences().init();
+
   DatabaseHelper.instance.database;
 }
 
@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      // home: const AdminHomePage(),
-      home: const RecipeHelper(),
+      home: const Login(),
+      // home: const RecipeHelper(),
     );
   }
 }

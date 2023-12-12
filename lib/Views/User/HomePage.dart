@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class RecipeHelper extends StatefulWidget {
 }
 
 class _RecipeHelperState extends State<RecipeHelper> {
+  late Timer dataFetchTimer;
   late Future<List<Category>> categories;
   BannerAd banner = AddUtility().myBanner;
   late Future<List<FoodItem>> foodItems;
@@ -38,11 +40,27 @@ class _RecipeHelperState extends State<RecipeHelper> {
     }
   }
 
+  startTimerDataFetch(){
+    dataFetchTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      setState(() {
+        foodItems = fetchFoodItems();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    dataFetchTimer.cancel();
+  }
+
   @override
   void initState() {
     super.initState();
     banner.load();
     foodItems = fetchFoodItems();
+    startTimerDataFetch();
   }
 
   @override
