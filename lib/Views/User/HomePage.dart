@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 
-import '../../Database/DatabaseHelper.dart';
 import '../../Google Ads/BannerAds.dart';
 import '../../Model/Category.dart';
 import '../../Model/FooItem.dart';
 import '../../Utility/AddUtility.dart';
 import '../../Utility/Utility.dart';
-import 'Components/CategoryItem.dart';
+import '../Admin/Components/FoodItemView.dart';
 import 'Components/SearchBarWithSettingsButton.dart';
 
 class RecipeHelper extends StatefulWidget {
@@ -28,20 +27,21 @@ class _RecipeHelperState extends State<RecipeHelper> {
   late Future<List<FoodItem>> foodItems;
 
   Future<List<FoodItem>> fetchFoodItems() async {
-    var response = await http.get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'));
+    var response = await http
+        .get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'));
 
     if (response.statusCode == 200) {
       List foodItemJson = json.decode(response.body);
       List<FoodItem> foodItem =
-      foodItemJson.map((json) => FoodItem.fromJson(json)).toList();
+          foodItemJson.map((json) => FoodItem.fromJson(json)).toList();
       return foodItem;
     } else {
       throw Exception('Failed to load categories');
     }
   }
 
-  startTimerDataFetch(){
-    dataFetchTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+  startTimerDataFetch() {
+    dataFetchTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       setState(() {
         foodItems = fetchFoodItems();
       });
@@ -137,7 +137,7 @@ class _RecipeHelperState extends State<RecipeHelper> {
                         ),
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          return FoodItemUserView(foodItem: snapshot.data![index]);
+                          return FoodItemView(foodItem: snapshot.data![index]);
                         },
                       );
                     } else if (snapshot.hasError) {

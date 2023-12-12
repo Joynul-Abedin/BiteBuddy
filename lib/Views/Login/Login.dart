@@ -1,17 +1,16 @@
 import 'dart:convert';
 
 import 'package:bite_buddy/Utility/SharedPreference.dart';
-import 'package:bite_buddy/Views/UserDefiner.dart';
+import 'package:bite_buddy/Views/User/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/User.dart';
 import '../../Utility/Colors.dart';
 import '../../Utility/Constants.dart';
 import '../../Utility/Functions.dart';
+import '../Admin/AdminHomePage.dart';
 import '../Register/Register.dart';
-
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -29,16 +28,11 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late UserPreferences sharedPreference;
 
-  routeToDestination(String role) async {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => UserDefiner(userType: role)));
-  }
-
   @override
   initState() {
     super.initState();
+    UserPreferences().init();
     sharedPreference = UserPreferences();
-    isLogin = sharedPreference.getBoolValue(Constants.IS_LOGGEDIN, false);
   }
 
   Future<bool> login(String email, String password) async {
@@ -60,7 +54,33 @@ class _LoginState extends State<Login> {
       debugPrint(user.toString());
       sharedPreference.setBoolValue(Constants.IS_LOGGEDIN, true);
       sharedPreference.setStringValue(Constants.USER_TYPE, user.role!);
-      routeToDestination(user.role!);
+      debugPrint(user.role!);
+      switch (user.role) {
+        case 'admin':
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AdminHomePage(),
+            ),
+          ); // Replace with your admin page widget
+          break;
+        case 'user':
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RecipeHelper(),
+            ),
+          );
+          break;
+        // Add more cases as per different roles
+        default:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RecipeHelper(),
+            ),
+          );
+      }
       return true;
     } else {
       final errorData = json.decode(response.body);

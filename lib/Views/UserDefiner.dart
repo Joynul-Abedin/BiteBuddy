@@ -13,14 +13,14 @@ class UserDefiner extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AdminHomePage(),
+          builder: (context) => const AdminHomePage(),
         ),
       );
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => RecipeHelper(),
+          builder: (context) => const RecipeHelper(),
         ),
       );
     }
@@ -29,4 +29,3 @@ class UserDefiner extends StatelessWidget {
     return Container();
   }
 }
-

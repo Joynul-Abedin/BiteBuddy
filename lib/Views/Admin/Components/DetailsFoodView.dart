@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import '../../../Google Ads/BannerAds.dart';
 import '../../../Utility/AddUtility.dart';
 import '../../../Utility/Utility.dart';
 
@@ -62,7 +61,7 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
             child: Column(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.width / 3,
+                  height: MediaQuery.of(context).size.width / 2,
                   width: double.infinity,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
@@ -101,12 +100,12 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
                           ),
                           onPressed: () {},
                         ),
-
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                          onPressed: () {}, child: const Row(
+                          onPressed: () {},
+                          child: const Row(
                             children: [
                               Icon(Icons.favorite_border),
                               Text("Add to Favorite"),
@@ -120,9 +119,6 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
               ],
             ),
           )),
-
-
-
     );
   }
 
@@ -133,9 +129,6 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 30,
-          ),
           Row(
             children: [
               Text(
@@ -149,7 +142,8 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
                 ),
               ),
               const Spacer(),
-              Text( 'from Tk ${foodItem.price}',
+              Text(
+                'from Tk ${foodItem.price}',
                 style: TextStyle(
                   fontSize: 18 * screenWidth / 400,
                   // Adjust the value as needed

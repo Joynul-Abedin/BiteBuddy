@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:bite_buddy/Model/FooItem.dart';
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
 
+import '../../Utility/Constants.dart';
 import 'Components/FoodItemView.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -29,22 +29,31 @@ class _AdminHomePageState extends State<AdminHomePage> {
   // Controller for the search field
   TextEditingController searchController = TextEditingController();
 
-  Future<List<FoodItem>> fetchFoodItems() async {
-    var response = await http
-        .get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'));
+  Future<List<FoodItem>> fetchFoodItems([String? searchQuery]) async {
+    var url = Uri.parse('${Constants.baseUrl}/food-item');
+
+    var response = await http.get(url);
 
     if (response.statusCode == 200) {
-      List foodItemJson = json.decode(response.body);
-      List<FoodItem> foodItem =
+      List<dynamic> foodItemJson = json.decode(response.body);
+
+      // Filter items if a search query is provided
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        foodItemJson = foodItemJson.where((item) {
+          return item['name'].toLowerCase().contains(searchQuery.toLowerCase());
+        }).toList();
+      }
+
+      List<FoodItem> foodItems =
           foodItemJson.map((json) => FoodItem.fromJson(json)).toList();
-      return foodItem;
+      return foodItems;
     } else {
-      throw Exception('Failed to load categories');
+      throw Exception('Failed to load food items');
     }
   }
 
-  startTimerDataFetch() {
-    dataFetchTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+  void startTimerDataFetch() {
+    dataFetchTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       setState(() {
         foodItems = fetchFoodItems();
       });
@@ -54,8 +63,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
   @override
   void dispose() {
     searchController.dispose();
-    super.dispose();
     dataFetchTimer.cancel();
+    super.dispose();
   }
 
   @override
@@ -89,7 +98,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 suffixIcon: Icon(Icons.search),
               ),
               onChanged: (value) {
-                // TODO: Implement search functionality
+                if (dataFetchTimer.isActive) {
+                  dataFetchTimer.cancel();
+                }
+
+                setState(() {
+                  foodItems = fetchFoodItems(value!);
+                });
+
+                if (value.isEmpty) {
+                  startTimerDataFetch();
+                }
               },
             ),
           ),
@@ -124,35 +143,48 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   void openAddFoodItemDialog() {
-    showAboutDialog(context: context, children: [
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Calculate the width
+        double dialogWidth = MediaQuery.of(context).size.width - 20;
+
+        return AlertDialog(
+          content: Container(
+            width: dialogWidth,
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                  ),
+                  TextField(
+                    controller: pictureUrlController,
+                    decoration: const InputDecoration(labelText: 'Picture URL'),
+                  ),
+                  TextField(
+                    controller: priceController,
+                    decoration: const InputDecoration(labelText: 'Price'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextField(
+                    controller: quantityController,
+                    decoration: const InputDecoration(labelText: 'Quantity'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextField(
+                    controller: descriptionController,
+                    decoration: const InputDecoration(labelText: 'Description'),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
             ),
-            TextField(
-              controller: pictureUrlController,
-              decoration: const InputDecoration(labelText: 'Picture URL'),
-            ),
-            TextField(
-              controller: priceController,
-              decoration: const InputDecoration(labelText: 'Price'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: quantityController,
-              decoration: const InputDecoration(labelText: 'Quantity'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Description'),
-              maxLines: 3,
-            ),
+          ),
+          actions: [
             ElevatedButton(
               child: const Text('Add Item'),
               onPressed: () async {
@@ -162,8 +194,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     quantityController.text.isNotEmpty &&
                     descriptionController.text.isNotEmpty) {
                   var response = await http.post(
-                    Uri.parse(
-                        'https://bitebuddy-nydw.onrender.com/api/v1/food-item'),
+                    Uri.parse('${Constants.baseUrl}/food-item'),
                     headers: {
                       'Content-Type': 'application/json; charset=UTF-8',
                     },
@@ -175,25 +206,20 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       'description': descriptionController.text,
                     }),
                   );
-
                   if (response.statusCode == 200) {
-                    // Handle successful response
-                    print('Food item added successfully');
+                    debugPrint('Food item added successfully');
                   } else {
-                    // Handle error response
-                    print('Failed to add food item');
+                    debugPrint('Failed to add food item');
                   }
-
-                  Navigator.pop(context); // Close the bottom sheet
+                  Navigator.pop(context);
                 } else {
-                  // Handle validation failure
-                  print('Validation failed');
+                  debugPrint('Validation failed');
                 }
               },
             ),
           ],
-        ),
-      )
-    ]);
+        );
+      },
+    );
   }
 }
