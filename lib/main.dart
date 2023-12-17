@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
   final isLoggedIn =
       UserPreferences().getBoolValue(Constants.IS_LOGGEDIN, false);
   final userType =
-      UserPreferences().getStringValue(Constants.USER_TYPE, 'user');
+      UserPreferences().getStringValue(Constants.USER_TYPE, 'customer');
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: isLoggedIn
-          ? userType == 'user'
+          ? userType == 'customer'
               ? const RecipeHelper()
               : const AdminHomePage()
           : const Login(),

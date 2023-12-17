@@ -53,22 +53,21 @@ class _LoginState extends State<Login> {
       final user = User.fromJson(data['user']);
       debugPrint(user.toString());
       sharedPreference.setBoolValue(Constants.IS_LOGGEDIN, true);
+      sharedPreference.setStringValue(Constants.USER_EMAIL, user.email!);
       sharedPreference.setStringValue(Constants.USER_TYPE, user.role!);
       debugPrint(user.role!);
       switch (user.role) {
-        case 'admin':
+        case 'owner':
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-              builder: (context) => const AdminHomePage(),
-            ),
+            MaterialPageRoute(builder: (context) => AdminHomePage()),
           ); // Replace with your admin page widget
           break;
-        case 'user':
+        case 'customer':
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const RecipeHelper(),
+              builder: (context) => RecipeHelper(),
             ),
           );
           break;
@@ -77,7 +76,7 @@ class _LoginState extends State<Login> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const RecipeHelper(),
+              builder: (context) => RecipeHelper(),
             ),
           );
       }

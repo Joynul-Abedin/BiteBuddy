@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bite_buddy/Model/FooItem.dart';
+import 'package:bite_buddy/Model/User.dart';
+import 'package:bite_buddy/Utility/Utility.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Utility/Constants.dart';
+import '../../Utility/SharedPreference.dart';
+import '../Common Components/Drawer.dart';
 import 'Components/FoodItemView.dart';
 
 class AdminHomePage extends StatefulWidget {
@@ -17,14 +21,17 @@ class AdminHomePage extends StatefulWidget {
 
 class _AdminHomePageState extends State<AdminHomePage> {
   late Timer dataFetchTimer;
+
   // Controllers for text fields
   TextEditingController nameController = TextEditingController();
   TextEditingController pictureUrlController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
   // List to hold your food items
   late Future<List<FoodItem>> foodItems;
+  User? user;
 
   // Controller for the search field
   TextEditingController searchController = TextEditingController();
@@ -60,6 +67,18 @@ class _AdminHomePageState extends State<AdminHomePage> {
     });
   }
 
+  Future<User> getUserWithEmail() async {
+    final email = UserPreferences().getStringValue(Constants.USER_EMAIL, '');
+    debugPrint('Email: $email');
+    var response = await http.get(
+        Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/users/$email'));
+    if (response.statusCode == 200) {
+      return User.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   @override
   void dispose() {
     searchController.dispose();
@@ -69,77 +88,102 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     foodItems = fetchFoodItems();
+    getUserWithEmail().then((fetchedUser) {
+      debugPrint('User fetched: ${fetchedUser.name}');
+      setState(() {
+        user = fetchedUser; // Update the user state when data is fetched
+      });
+    });
     startTimerDataFetch();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => openAddFoodItemDialog(),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search Food Items',
-                suffixIcon: Icon(Icons.search),
+    return user == null
+        ? const Center(child: CircularProgressIndicator())
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Admin Dashboard',
+                style: TextStyle(color: ColorUtils.primaryTextColor),
               ),
-              onChanged: (value) {
-                if (dataFetchTimer.isActive) {
-                  dataFetchTimer.cancel();
-                }
-
-                setState(() {
-                  foodItems = fetchFoodItems(value!);
-                });
-
-                if (value.isEmpty) {
-                  startTimerDataFetch();
-                }
-              },
+              backgroundColor: ColorUtils.primaryColor,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add, color: ColorUtils.primaryTextColor),
+                  onPressed: () => openAddFoodItemDialog(),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<FoodItem>>(
-              future: foodItems,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  debugPrint('Data: ${snapshot.data?.length}');
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(0),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+            body: Container(
+              color: ColorUtils.primaryColor,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search Food Items',
+                        labelStyle:
+                            TextStyle(color: ColorUtils.primaryTextColor),
+                        suffixIcon: Icon(Icons.search,
+                            color: ColorUtils.primaryTextColor),
+                      ),
+                      onChanged: (value) {
+                        if (dataFetchTimer.isActive) {
+                          dataFetchTimer.cancel();
+                        }
+
+                        setState(() {
+                          foodItems = fetchFoodItems(value);
+                        });
+
+                        if (value.isEmpty) {
+                          startTimerDataFetch();
+                        }
+                      },
                     ),
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return FoodItemView(foodItem: snapshot.data![index]);
-                    },
-                  );
-                } else if (snapshot.hasError) {
-                  debugPrint('Data: ${snapshot.data?.length}');
-                  return Text('${snapshot.error}');
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FutureBuilder<List<FoodItem>>(
+                        future: foodItems,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            debugPrint('Data: ${snapshot.data?.length}');
+                            return GridView.builder(
+                              padding: const EdgeInsets.all(0),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                              ),
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return FoodItemView(
+                                    foodItem: snapshot.data![index]);
+                              },
+                            );
+                          } else if (snapshot.hasError) {
+                            debugPrint('Data: ${snapshot.data?.length}');
+                            return Text('${snapshot.error}');
+                          }
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+            drawer: DrawerWidget(
+              user: user!,
+            ),
+          );
   }
 
   void openAddFoodItemDialog() {
@@ -148,7 +192,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
       builder: (BuildContext context) {
         // Calculate the width
         double dialogWidth = MediaQuery.of(context).size.width - 20;
-
         return AlertDialog(
           content: Container(
             width: dialogWidth,

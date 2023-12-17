@@ -34,7 +34,6 @@ class _FoodItemViewState extends State<FoodItemView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     nameController.text = widget.foodItem.name;
     pictureUrlController.text = widget.foodItem.pictureUrl;
@@ -237,7 +236,7 @@ class _FoodItemViewState extends State<FoodItemView> {
         return AlertDialog(
           title: const Text('Confirm Deletion'),
           content: const Text('Are you sure you want to delete this item?'),
-          actions: <Widget>[
+          actions: [
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {

@@ -10,7 +10,7 @@ class UserPreferences {
 
   UserPreferences._internal();
 
- init() async {
+  init() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
@@ -32,5 +32,9 @@ class UserPreferences {
   // Getter with key
   bool getBoolValue(String key, bool defaultValue) {
     return _prefs.getBool(key) ?? defaultValue;
+  }
+
+  clear() async {
+    await _prefs.clear();
   }
 }
