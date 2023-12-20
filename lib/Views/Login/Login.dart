@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bite_buddy/Controllers/Store/StoreController.dart';
 import 'package:bite_buddy/Utility/SharedPreference.dart';
 import 'package:bite_buddy/Views/Admin/StoreSetUpPage.dart';
 import 'package:bite_buddy/Views/User/HomePage.dart';
@@ -28,12 +29,14 @@ class _LoginState extends State<Login> {
   bool obscured = true;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late UserPreferences sharedPreference;
+  late StoreController storeController;
 
   @override
   initState() {
     super.initState();
     UserPreferences().init();
     sharedPreference = UserPreferences();
+    storeController = StoreController();
   }
 
   Future<bool> login(String email, String password) async {
@@ -64,7 +67,7 @@ class _LoginState extends State<Login> {
               'You need to set the store first', Colors.red);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => StoreSetupPage()),
+            MaterialPageRoute(builder: (context) => StoreSetupPage(controller: storeController,)),
           );
         }else{
           Navigator.pushReplacement(

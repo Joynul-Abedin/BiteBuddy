@@ -1,3 +1,4 @@
+import 'package:bite_buddy/Controllers/Store/StoreController.dart';
 import 'package:bite_buddy/Utility/Constants.dart';
 import 'package:bite_buddy/Views/Admin/OwnerHomePage.dart';
 import 'package:bite_buddy/Views/Login/Login.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
 
   final hasStore = UserPreferences().getBoolValue(Constants.HAS_STORE, false);
 
+  final storeController = StoreController();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,7 +51,7 @@ class MyApp extends StatelessWidget {
       home: isLoggedIn
           ? userType == 'customer'
               ? const RecipeHelper()
-              : hasStore ? const OwnerHomePage() : StoreSetupPage()
+              : hasStore ? const OwnerHomePage() : StoreSetupPage(controller: storeController,)
           : const Login(),
       // home: const RecipeHelper(),
     );
