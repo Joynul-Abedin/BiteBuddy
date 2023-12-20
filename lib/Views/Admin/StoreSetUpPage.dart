@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:glassmorphism_widgets/glassmorphism_widgets.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../Controllers/Store/StoreController.dart';
-
+import 'Components/HoursView.dart';
 
 class StoreSetupPage extends StatefulWidget {
   final StoreController controller;
@@ -21,7 +21,8 @@ class StoreSetupPageState extends State<StoreSetupPage> {
   @override
   void initState() {
     super.initState();
-    widget.controller.categoriesController.text = widget.controller.categories[0];
+    widget.controller.categoriesController.text =
+        widget.controller.categories[0];
     widget.controller.menuController.text = widget.controller.menu[0];
   }
 
@@ -56,20 +57,52 @@ class StoreSetupPageState extends State<StoreSetupPage> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
-                  const Text("Store Setup", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white)),
+                  const Text("Store Setup",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
                   _buildImagePicker(),
-                  _buildGlassInputField('Store Name', widget.controller.nameController, 'Please enter store name'),
-                  _buildGlassInputField('Description', widget.controller.descriptionController, 'Please enter description'),
-                  _buildGlassDropdownField('Categories', widget.controller.categories, widget.controller.categoriesController),
-                  _buildGlassDropdownField('Menu', widget.controller.menu, widget.controller.menuController),
-                  _buildGlassInputField('Street', widget.controller.streetController, 'Please enter street'),
-                  _buildGlassInputField('City', widget.controller.cityController, 'Please enter city'),
-                  _buildGlassInputField('State', widget.controller.stateController, 'Please enter state'),
-                  _buildGlassInputField('Zip Code', widget.controller.zipCodeController, 'Please enter zip code'),
-                  _buildGlassInputField('Country', widget.controller.countryController, 'Please enter country'),
-                  _buildGlassInputField('Phone', widget.controller.phoneController, 'Please enter phone'),
-                  _buildGlassInputField('Email', widget.controller.emailController, 'Please enter email'),
-                  _buildGlassInputField('Website', widget.controller.websiteController, 'Please enter website'),
+                  _buildGlassInputField(
+                      'Store Name',
+                      widget.controller.nameController,
+                      'Please enter store name'),
+                  _buildGlassInputField(
+                      'Description',
+                      widget.controller.descriptionController,
+                      'Please enter description'),
+                  _buildGlassDropdownField(
+                      'Categories',
+                      widget.controller.categories,
+                      widget.controller.categoriesController),
+                  _buildGlassDropdownField('Menu', widget.controller.menu,
+                      widget.controller.menuController),
+                  // Add HoursView here
+                  HoursView(controller: widget.controller),
+                  _buildGlassInputField(
+                      'Street',
+                      widget.controller.streetController,
+                      'Please enter street'),
+                  _buildGlassInputField('City',
+                      widget.controller.cityController, 'Please enter city'),
+                  _buildGlassInputField('State',
+                      widget.controller.stateController, 'Please enter state'),
+                  _buildGlassInputField(
+                      'Zip Code',
+                      widget.controller.zipCodeController,
+                      'Please enter zip code'),
+                  _buildGlassInputField(
+                      'Country',
+                      widget.controller.countryController,
+                      'Please enter country'),
+                  _buildGlassInputField('Phone',
+                      widget.controller.phoneController, 'Please enter phone'),
+                  _buildGlassInputField('Email',
+                      widget.controller.emailController, 'Please enter email'),
+                  _buildGlassInputField(
+                      'Website',
+                      widget.controller.websiteController,
+                      'Please enter website'),
                   GlassButton(
                     border: 0,
                     blur: 10,
@@ -81,10 +114,17 @@ class StoreSetupPageState extends State<StoreSetupPage> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        // Handle form submission
+                        widget.controller.submitDataToServer();
                       }
                     },
-                    child: const GlassText("Submit", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold), opacity: 1.0,),
+                    child: const GlassText(
+                      "Submit",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                      opacity: 1.0,
+                    ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
@@ -98,7 +138,8 @@ class StoreSetupPageState extends State<StoreSetupPage> {
     );
   }
 
-  Widget _buildGlassInputField(String label, TextEditingController controller, String validationMessage) {
+  Widget _buildGlassInputField(String label, TextEditingController controller,
+      String validationMessage) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: GlassContainer(
@@ -139,7 +180,8 @@ class StoreSetupPageState extends State<StoreSetupPage> {
     );
   }
 
-  Widget _buildGlassDropdownField(String label, List<String> items, TextEditingController controller) {
+  Widget _buildGlassDropdownField(
+      String label, List<String> items, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: GlassContainer(
@@ -190,7 +232,7 @@ class StoreSetupPageState extends State<StoreSetupPage> {
               const SizedBox(height: 10),
               Center(
                 child: GestureDetector(
-                  onTap:() {
+                  onTap: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -203,8 +245,7 @@ class StoreSetupPageState extends State<StoreSetupPage> {
                                 GestureDetector(
                                   child: const Text('Gallery'),
                                   onTap: () {
-                                    _selectImage(
-                                        ImageSource.gallery);
+                                    _selectImage(ImageSource.gallery);
                                     Navigator.of(context).pop();
                                   },
                                 ),
@@ -214,8 +255,7 @@ class StoreSetupPageState extends State<StoreSetupPage> {
                                 GestureDetector(
                                   child: const Text('Camera'),
                                   onTap: () {
-                                    _selectImage(
-                                        ImageSource.camera);
+                                    _selectImage(ImageSource.camera);
                                     Navigator.of(context).pop();
                                   },
                                 ),
@@ -227,8 +267,10 @@ class StoreSetupPageState extends State<StoreSetupPage> {
                     );
                   },
                   child: widget.controller.userImage == null
-                      ? const Icon(Icons.add_a_photo, color: Colors.white, size: 50)
-                      : Image.file(widget.controller.userImage!, fit: BoxFit.cover),
+                      ? const Icon(Icons.add_a_photo,
+                          color: Colors.white, size: 50)
+                      : Image.file(widget.controller.userImage!,
+                          fit: BoxFit.cover),
                 ),
               ),
             ],
@@ -248,5 +290,4 @@ class StoreSetupPageState extends State<StoreSetupPage> {
       });
     }
   }
-
 }

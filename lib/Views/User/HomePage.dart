@@ -4,13 +4,10 @@ import 'dart:convert';
 import 'package:bite_buddy/Model/User.dart';
 import 'package:bite_buddy/Views/Common%20Components/Drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
 
-import '../../Google Ads/BannerAds.dart';
 import '../../Model/Category.dart';
 import '../../Model/FooItem.dart';
-import '../../Utility/AddUtility.dart';
 import '../../Utility/Constants.dart';
 import '../../Utility/SharedPreference.dart';
 import '../../Utility/Utility.dart';
@@ -29,7 +26,7 @@ class _RecipeHelperState extends State<RecipeHelper> {
   User? user;
 
   late Future<List<Category>> categories;
-  BannerAd banner = AddUtility().myBanner;
+  // BannerAd banner = AddUtility().myBanner;
   late Future<List<FoodItem>> foodItems;
 
   Future<List<FoodItem>> fetchFoodItems() async {
@@ -68,7 +65,6 @@ class _RecipeHelperState extends State<RecipeHelper> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     dataFetchTimer.cancel();
   }
@@ -76,12 +72,12 @@ class _RecipeHelperState extends State<RecipeHelper> {
   @override
   void initState() {
     super.initState();
-    banner.load();
+    // banner.load();
     foodItems = fetchFoodItems();
     getUserWithEmail().then((fetchedUser) {
       setState(() {
         debugPrint('User fetched: ${fetchedUser.name}');
-        user = fetchedUser; // Update the user state when data is fetched
+        user = fetchedUser;
       });
     });
     startTimerDataFetch();

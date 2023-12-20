@@ -54,22 +54,28 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       debugPrint(data.toString());
+      final token = data['token'];
       final user = User.fromJson(data['user']);
       debugPrint(user.toString());
       sharedPreference.setBoolValue(Constants.IS_LOGGEDIN, true);
+      sharedPreference.setStringValue(Constants.TOKEN, token);
+      sharedPreference.setStringValue(Constants.USER_ID, user.sId!);
       sharedPreference.setStringValue(Constants.USER_EMAIL, user.email!);
       sharedPreference.setStringValue(Constants.USER_TYPE, user.role!);
       sharedPreference.setBoolValue(Constants.HAS_STORE, user.hasStore!);
       debugPrint(user.role!);
       if (user.role case 'owner') {
-        if(user.hasStore == false) {
+        if (user.hasStore == false) {
           FunctionsUtility.showToastMessage(
               'You need to set the store first', Colors.red);
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => StoreSetupPage(controller: storeController,)),
+            MaterialPageRoute(
+                builder: (context) => StoreSetupPage(
+                      controller: storeController,
+                    )),
           );
-        }else{
+        } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => OwnerHomePage()),

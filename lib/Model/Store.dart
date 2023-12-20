@@ -160,24 +160,46 @@ class Contact {
 }
 
 class Hours {
-  final Map<String, OpenClose> dayHours;
+  final OpenClose monday;
+  final OpenClose tuesday;
+  final OpenClose wednesday;
+  final OpenClose thursday;
+  final OpenClose friday;
+  final OpenClose saturday;
+  final OpenClose sunday;
 
-  Hours({required this.dayHours});
+  Hours({
+    required this.monday,
+    required this.tuesday,
+    required this.wednesday,
+    required this.thursday,
+    required this.friday,
+    required this.saturday,
+    required this.sunday,
+  });
 
   factory Hours.fromJson(Map<String, dynamic> json) {
-    Map<String, OpenClose> hours = {};
-    json.forEach((key, value) {
-      hours[key] = OpenClose.fromJson(value);
-    });
-    return Hours(dayHours: hours);
+    return Hours(
+      monday: OpenClose.fromJson(json['monday'] ?? {}),
+      tuesday: OpenClose.fromJson(json['tuesday'] ?? {}),
+      wednesday: OpenClose.fromJson(json['wednesday'] ?? {}),
+      thursday: OpenClose.fromJson(json['thursday'] ?? {}),
+      friday: OpenClose.fromJson(json['friday'] ?? {}),
+      saturday: OpenClose.fromJson(json['saturday'] ?? {}),
+      sunday: OpenClose.fromJson(json['sunday'] ?? {}),
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    dayHours.forEach((key, value) {
-      data[key] = value.toJson();
-    });
-    return data;
+    return {
+      'monday': monday.toJson(),
+      'tuesday': tuesday.toJson(),
+      'wednesday': wednesday.toJson(),
+      'thursday': thursday.toJson(),
+      'friday': friday.toJson(),
+      'saturday': saturday.toJson(),
+      'sunday': sunday.toJson(),
+    };
   }
 }
 
@@ -185,20 +207,23 @@ class OpenClose {
   final String open;
   final String close;
 
-  OpenClose({required this.open, required this.close});
+  OpenClose({
+    required this.open,
+    required this.close,
+  });
 
   factory OpenClose.fromJson(Map<String, dynamic> json) {
     return OpenClose(
-      open: json['open'],
-      close: json['close'],
+      open: json['open'] ?? '',
+      close: json['close'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['open'] = open;
-    data['close'] = close;
-    return data;
+    return {
+      'open': open,
+      'close': close,
+    };
   }
 }
 
