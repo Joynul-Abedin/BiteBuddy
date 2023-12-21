@@ -24,6 +24,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  bool isLoading = false;
   bool isLogin = false;
   late String userType;
   bool obscured = true;
@@ -40,6 +41,11 @@ class _LoginState extends State<Login> {
   }
 
   Future<bool> login(String email, String password) async {
+    setState(() {
+      isLoading = true; // Start loading
+    });
+
+
     final Map<String, String> requestData = {
       "email": email,
       "password": password,
@@ -61,6 +67,7 @@ class _LoginState extends State<Login> {
       sharedPreference.setStringValue(Constants.TOKEN, token);
       sharedPreference.setStringValue(Constants.USER_ID, user.sId!);
       sharedPreference.setStringValue(Constants.USER_EMAIL, user.email!);
+      sharedPreference.setStringValue(Constants.USER_PASSWORD, password);
       sharedPreference.setStringValue(Constants.USER_TYPE, user.role!);
       sharedPreference.setBoolValue(Constants.HAS_STORE, user.hasStore!);
       debugPrint(user.role!);
@@ -96,11 +103,17 @@ class _LoginState extends State<Login> {
           ),
         );
       }
+      setState(() {
+        isLoading = false; // Stop loading when login process is done
+      });
       return true;
     } else {
       final errorData = json.decode(response.body);
       final errorMessage = errorData['message'] ?? 'Unknown error occurred';
       FunctionsUtility.showToastMessage(errorMessage, Colors.red);
+      setState(() {
+        isLoading = false; // Stop loading when login process is done
+      });
       return false;
     }
   }
@@ -263,7 +276,9 @@ class _LoginState extends State<Login> {
                         const SizedBox(height: 24.0),
                         GestureDetector(
                           onTap: () {
-                            login(_email.text, _password.text);
+                            if (!isLoading) { // Check if not already loading
+                              login(_email.text, _password.text);
+                            }
                           },
                           child: Container(
                             height: 50,
@@ -272,8 +287,10 @@ class _LoginState extends State<Login> {
                               borderRadius: BorderRadius.circular(10),
                               color: AppColors.primaryColor,
                             ),
-                            child: const Center(
-                              child: Text(
+                            child: Center(
+                              child: isLoading
+                                  ? const CircularProgressIndicator(color: Colors.white) // Show loading indicator
+                                  : const Text(
                                 'Sign In',
                                 style: TextStyle(
                                   color: Colors.white,

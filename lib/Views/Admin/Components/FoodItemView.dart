@@ -103,7 +103,7 @@ class _FoodItemViewState extends State<FoodItemView> {
           ),
         ),
       ),
-      if (userType == 'admin')
+      if (userType == 'owner')
         Positioned(
           top: 0,
           right: 0,
@@ -185,7 +185,7 @@ class _FoodItemViewState extends State<FoodItemView> {
                     maxLines: 3,
                   ),
                   ElevatedButton(
-                    child: const Text('Add Item'),
+                    child: const Text('Update Item'),
                     onPressed: () async {
                       if (nameController.text.isNotEmpty &&
                           pictureUrlController.text.isNotEmpty &&
