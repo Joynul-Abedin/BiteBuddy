@@ -15,13 +15,16 @@ import 'Utility/SharedPreference.dart';
 import 'Views/Admin/StoreSetUpPage.dart';
 import 'Views/User/Cart/Provider/CartProvider.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await UserPreferences().init();
-  MobileAds.instance.initialize();
-  ChangeNotifierProvider(
-    create: (context) => CartProvider(),
-    child: const MyApp(),
+  await MobileAds.instance.initialize();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CartProvider(),
+      child: const MyApp(),
+    ),
   );
 }
 
