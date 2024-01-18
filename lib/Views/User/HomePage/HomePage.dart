@@ -6,26 +6,27 @@ import 'package:bite_buddy/Views/Common%20Components/Drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../../Model/Category.dart';
-import '../../Model/FooItem.dart';
-import '../../Utility/Constants.dart';
-import '../../Utility/SharedPreference.dart';
-import '../../Utility/Utility.dart';
-import '../Admin/Components/FoodItemView.dart';
-import 'Components/SearchBarWithSettingsButton.dart';
+import '../../../Model/Category.dart';
+import '../../../Model/FooItem.dart';
+import '../../../Utility/Constants.dart';
+import '../../../Utility/SharedPreference.dart';
+import '../../../Utility/Utility.dart';
+import '../../Admin/Components/FoodItemView.dart';
+import '../Components/SearchBarWithSettingsButton.dart';
 
-class RecipeHelper extends StatefulWidget {
-  const RecipeHelper({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<RecipeHelper> createState() => _RecipeHelperState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _RecipeHelperState extends State<RecipeHelper> {
+class _HomePageState extends State<HomePage> {
   late Timer dataFetchTimer;
   User? user;
 
   late Future<List<Category>> categories;
+
   // BannerAd banner = AddUtility().myBanner;
   late Future<List<FoodItem>> foodItems;
 
@@ -181,7 +182,6 @@ class _RecipeHelperState extends State<RecipeHelper> {
             ),
             drawer: DrawerWidget(
               user: user!,
-            ),
-          );
+            ));
   }
 }

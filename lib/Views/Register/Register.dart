@@ -72,7 +72,7 @@ class _RegisterState extends State<Register> {
       FunctionsUtility.showToastMessage(
           'Registration Successful.', Colors.green);
       Navigator.pop(context);
-      Navigator.push(context, MaterialPageRoute(builder: (_) => Login()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const Login()));
       return;
     } else {
       FunctionsUtility.showToastMessage(
@@ -419,7 +419,7 @@ class _RegisterState extends State<Register> {
                           const SizedBox(height: 24.0),
                           GestureDetector(
                             onTap: () {
-                              debugPrint('${_role.text}');
+                              debugPrint(_role.text);
                               registration(
                                 '${_firstName.text} ${_lastName.text}',
                                 _email.text,

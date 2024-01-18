@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:bite_buddy/Controllers/Store/StoreController.dart';
 import 'package:bite_buddy/Utility/SharedPreference.dart';
 import 'package:bite_buddy/Views/Admin/StoreSetUpPage.dart';
-import 'package:bite_buddy/Views/User/HomePage.dart';
+import 'package:bite_buddy/Views/User/LnadingPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,7 +45,6 @@ class _LoginState extends State<Login> {
       isLoading = true; // Start loading
     });
 
-
     final Map<String, String> requestData = {
       "email": email,
       "password": password,
@@ -85,21 +84,21 @@ class _LoginState extends State<Login> {
         } else {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => OwnerHomePage()),
+            MaterialPageRoute(builder: (context) => const OwnerHomePage()),
           ); // Replace with your admin page widget
         }
       } else if (user.role case 'customer') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => RecipeHelper(),
+            builder: (context) => const LandingPage(),
           ),
         );
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => RecipeHelper(),
+            builder: (context) => const LandingPage(),
           ),
         );
       }
@@ -276,7 +275,8 @@ class _LoginState extends State<Login> {
                         const SizedBox(height: 24.0),
                         GestureDetector(
                           onTap: () {
-                            if (!isLoading) { // Check if not already loading
+                            if (!isLoading) {
+                              // Check if not already loading
                               login(_email.text, _password.text);
                             }
                           },
@@ -289,15 +289,17 @@ class _LoginState extends State<Login> {
                             ),
                             child: Center(
                               child: isLoading
-                                  ? const CircularProgressIndicator(color: Colors.white) // Show loading indicator
+                                  ? const CircularProgressIndicator(
+                                      color: Colors
+                                          .white) // Show loading indicator
                                   : const Text(
-                                'Sign In',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                                      'Sign In',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),

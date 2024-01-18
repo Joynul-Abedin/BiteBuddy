@@ -19,9 +19,10 @@ class StoreController {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController websiteController = TextEditingController();
+  final TextEditingController latitudeController = TextEditingController();
+  final TextEditingController longitudeController = TextEditingController();
   final TextEditingController categoriesController = TextEditingController();
   final TextEditingController menuController = TextEditingController();
-
   final TextEditingController mondayOpenController = TextEditingController();
   final TextEditingController mondayCloseController = TextEditingController();
   final TextEditingController tuesdayOpenController = TextEditingController();
@@ -78,20 +79,19 @@ class StoreController {
         zipCode: zipCodeController.text,
         country: countryController.text,
       );
-
       Location location = Location(
         type: 'Point',
-        coordinates: [0.0, 0.0],
+        coordinates: [
+          double.parse(latitudeController.text),
+          double.parse(longitudeController.text)
+        ],
       );
-
       Contact contact = Contact(
         phone: phoneController.text,
         email: emailController.text,
         website: websiteController.text,
       );
-
       Hours hours = getHours();
-
       // Create a Store object
       Store store = Store(
         name: nameController.text,
@@ -128,14 +128,14 @@ class StoreController {
       debugPrint('Status Code: ${response.statusCode}');
 
       if (response.statusCode == 200) {
-        print('Store data submitted successfully');
+        debugPrint('Store data submitted successfully');
       } else {
         // Handle server error
-        print('Failed to submit store data: ${response.body}');
+        debugPrint('Failed to submit store data: ${response.body}');
       }
     } catch (e) {
       // Handle any errors that occur during the process
-      print('Error submitting store data: $e');
+      debugPrint('Error submitting store data: $e');
     }
   }
 }

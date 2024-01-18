@@ -4,9 +4,11 @@ import 'package:bite_buddy/Model/FooItem.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 
 import '../../../Utility/AddUtility.dart';
 import '../../../Utility/Utility.dart';
+import '../../User/Cart/Provider/CartProvider.dart';
 
 class DetailsFoodView extends StatefulWidget {
   final FoodItem foodItem;
@@ -98,7 +100,10 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
                               Text("Add to Cart"),
                             ],
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Provider.of<CartProvider>(context, listen: false)
+                                .addToCart(widget.foodItem);
+                          },
                         ),
                       ),
                       Padding(

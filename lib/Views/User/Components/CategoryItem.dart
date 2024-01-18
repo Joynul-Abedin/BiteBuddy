@@ -2,9 +2,7 @@ import 'package:bite_buddy/Model/FooItem.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../Model/Category.dart';
 import '../../../Utility/Utility.dart';
-import 'CategoryWiseFoodList.dart';
 
 class FoodItemUserView extends StatelessWidget {
   final FoodItem foodItem;

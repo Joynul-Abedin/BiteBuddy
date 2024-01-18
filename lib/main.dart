@@ -4,20 +4,25 @@ import 'package:bite_buddy/Controllers/Store/StoreController.dart';
 import 'package:bite_buddy/Utility/Constants.dart';
 import 'package:bite_buddy/Views/Admin/OwnerHomePage.dart';
 import 'package:bite_buddy/Views/Login/Login.dart';
-import 'package:bite_buddy/Views/User/HomePage.dart';
+import 'package:bite_buddy/Views/User/LnadingPage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:provider/provider.dart';
 
 import 'Utility/SharedPreference.dart';
 import 'Views/Admin/StoreSetUpPage.dart';
+import 'Views/User/Cart/Provider/CartProvider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await UserPreferences().init();
   MobileAds.instance.initialize();
-  runApp(const MyApp());
+  ChangeNotifierProvider(
+    create: (context) => CartProvider(),
+    child: const MyApp(),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -60,8 +65,9 @@ class MyAppState extends State<MyApp> {
 
   Future<void> getNewToken() async {
     String? email = UserPreferences().getStringValue(Constants.USER_EMAIL, '');
-    String? password = UserPreferences().getStringValue(Constants.USER_PASSWORD, '');
-    if (email == null || password == null) return;
+    String? password =
+        UserPreferences().getStringValue(Constants.USER_PASSWORD, '');
+    if (password == null) return;
 
     final response = await http.post(
       Uri.parse('${Constants.baseUrl}/login'),
@@ -80,14 +86,14 @@ class MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    }
+    // if (isLoading) {
+    //   return const MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     home: Scaffold(
+    //       body: Center(child: CircularProgressIndicator()),
+    //     ),
+    //   );
+    // }
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -97,7 +103,7 @@ class MyAppState extends State<MyApp> {
       ),
       home: isLoggedIn
           ? userType == 'customer'
-              ? const RecipeHelper()
+              ? const LandingPage()
               : hasStore
                   ? const OwnerHomePage()
                   : StoreSetupPage(controller: StoreController())

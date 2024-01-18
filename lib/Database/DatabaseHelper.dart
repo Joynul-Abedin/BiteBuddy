@@ -118,10 +118,10 @@ class DatabaseHelper {
   Future<void> inserAllCategory(List<Map<String, dynamic>> rows) async {
     Database db = await instance.database;
     Batch batch = db.batch();
-    rows.forEach((row) {
+    for (var row in rows) {
       batch.insert('categories', row,
           conflictAlgorithm: ConflictAlgorithm.ignore);
-    });
+    }
     await batch.commit();
   }
 
@@ -134,9 +134,9 @@ class DatabaseHelper {
   Future<void> inserAllMeal(List<Map<String, dynamic>> rows) async {
     Database db = await instance.database;
     Batch batch = db.batch();
-    rows.forEach((row) {
+    for (var row in rows) {
       batch.insert('meals', row, conflictAlgorithm: ConflictAlgorithm.ignore);
-    });
+    }
     await batch.commit();
   }
 
@@ -149,10 +149,10 @@ class DatabaseHelper {
   Future<void> inserAllMealDetails(List<Map<String, dynamic>> rows) async {
     Database db = await instance.database;
     Batch batch = db.batch();
-    rows.forEach((row) {
+    for (var row in rows) {
       batch.insert('mealDetails', row,
           conflictAlgorithm: ConflictAlgorithm.ignore);
-    });
+    }
     await batch.commit();
   }
 

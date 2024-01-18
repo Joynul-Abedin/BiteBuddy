@@ -4,8 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart' as http;
-import 'package:share/share.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../Database/DatabaseHelper.dart';
 import '../../Google Ads/BannerAds.dart';
@@ -23,8 +21,6 @@ class MealDetailsPage extends StatefulWidget {
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
   late Future<MealDetails> mealDetails;
-  String youtubeUrl = '';
-  String sourceUrl = '';
 
   BannerAd banner = AddUtility().myBanner;
 
@@ -107,33 +103,6 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ActionButton(
-                        icon: Icons.play_circle_fill,
-                        text: 'Watch On Youtube',
-                        color: Colors.red,
-                        onPressed: () async {
-                          if (await canLaunch(youtubeUrl)) {
-                            await launch(youtubeUrl);
-                          } else {
-                            throw 'Could not launch $youtubeUrl';
-                          }
-                        },
-                      ),
-                      ActionButton(
-                        icon: Icons.share,
-                        text: 'Share Recipe',
-                        color: Colors.orange,
-                        onPressed: () {
-                          Share.share(
-                              'Check out this awesome recipe I found! $sourceUrl');
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 80),
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -166,8 +135,6 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
                               child: Center(
                                   child: Text('Error: ${snapshot.error}')));
                         } else if (snapshot.hasData) {
-                          youtubeUrl = snapshot.data!.strYoutube!;
-                          sourceUrl = snapshot.data!.strSource!;
                           return buildMealDetailsContent(
                               snapshot.data!, screenWidth, screenHeight);
                         } else {
