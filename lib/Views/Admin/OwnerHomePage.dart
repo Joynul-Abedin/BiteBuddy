@@ -96,7 +96,7 @@ class _OwnerHomePageState extends State<OwnerHomePage> {
         user = fetchedUser; // Update the user state when data is fetched
       });
     });
-    startTimerDataFetch();
+    // startTimerDataFetch();
   }
 
   @override

@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         user = fetchedUser;
       });
     });
-    startTimerDataFetch();
+    // startTimerDataFetch();
   }
 
   @override

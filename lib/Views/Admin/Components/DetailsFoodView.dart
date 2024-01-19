@@ -73,6 +73,8 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
                     child: CachedNetworkImage(
                       imageUrl: widget.foodItem.pictureUrl,
                       fit: BoxFit.fitWidth,
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
                   ),
                 ),
@@ -89,36 +91,49 @@ class DetailsFoodViewState extends State<DetailsFoodView> {
                 Positioned(
                   bottom: 0,
                   top: 0,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          child: const Row(
-                            children: [
-                              Icon(Icons.add_shopping_cart),
-                              Text("Add to Cart"),
-                            ],
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            child: Row(
+                              children: [
+                                const Icon(Icons.add_shopping_cart),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Add to Cart"),
+                                    const SizedBox(width: 10),
+                                    Consumer<CartProvider>(
+                                      builder: (context, cart, child) {
+                                        int itemCount = cart.getItemCount(widget.foodItem.id);
+                                        return itemCount > 0
+                                            ? CircleAvatar(
+                                          radius: 12,
+                                          backgroundColor: Colors.red,
+                                          child: Text(
+                                            itemCount.toString(),
+                                            style: const TextStyle(
+                                                fontSize: 12, color: Colors.white),
+                                          ),
+                                        )
+                                            : Container();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            onPressed: () {
+                              Provider.of<CartProvider>(context, listen: false)
+                                  .addToCart(widget.foodItem);
+                            },
                           ),
-                          onPressed: () {
-                            Provider.of<CartProvider>(context, listen: false)
-                                .addToCart(widget.foodItem);
-                          },
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: const Row(
-                            children: [
-                              Icon(Icons.favorite_border),
-                              Text("Add to Favorite"),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 )
               ],

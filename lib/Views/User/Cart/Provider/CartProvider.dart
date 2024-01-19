@@ -13,4 +13,14 @@ class CartProvider with ChangeNotifier {
     _cartItems.add(meal);
     notifyListeners();
   }
+
+  int getItemCount(String itemId) {
+    int count = 0;
+    for (var item in cartItems) {
+      if (item.id == itemId) {
+        count += 1;
+      }
+    }
+    return count;
+  }
 }

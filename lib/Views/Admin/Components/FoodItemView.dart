@@ -79,23 +79,47 @@ class _FoodItemViewState extends State<FoodItemView> {
                     ),
                     child: CachedNetworkImage(
                       imageUrl: widget.foodItem.pictureUrl,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitWidth,
+                      placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    widget.foodItem.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: ColorUtils.secondaryTextColor,
-                      fontFamily: FontUtility.primaryTextFont,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 3, // Giving twice the space for the name
+                        child: Text(
+                          widget.foodItem.name,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: ColorUtils.secondaryTextColor,
+                            fontFamily: FontUtility.primaryTextFont,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis, // Ellipsis for overflow
+                        ),
+                      ),
+                      Flexible(
+                        flex: 2, // Assigning less space for the price
+                        child: Text(
+                          "Tk${widget.foodItem.price.toString()}",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: ColorUtils.secondaryTextColor,
+                            fontFamily: FontUtility.primaryTextFont,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -152,7 +176,6 @@ class _FoodItemViewState extends State<FoodItemView> {
       builder: (BuildContext context) {
         // Calculate the width
         double dialogWidth = MediaQuery.of(context).size.width - 20;
-
         return AlertDialog(
           content: Container(
             width: dialogWidth,
