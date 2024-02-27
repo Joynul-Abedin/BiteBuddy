@@ -36,15 +36,28 @@ class _OwnerHomePageState extends State<OwnerHomePage> {
   // Controller for the search field
   TextEditingController searchController = TextEditingController();
 
+  final urls = [
+    "https://movieinfo-3owl.onrender.com",
+    "https://qrcode-generator-7o6r.onrender.com/ping",
+    "https://bitebuddy-nydw.onrender.com/api/v1/ping",
+    "https://tree-info.onrender.com/api/species/ping",
+    "https://weathertogo.onrender.com/api/ping"
+  ];
+
   Future<List<FoodItem>> fetchFoodItems([String? searchQuery]) async {
     var url = Uri.parse('${Constants.baseUrl}/food-item');
+    var server = await http.get(Uri.parse('https://serverrefresher-shokal07.pythonanywhere.com/'));
+
+    for (var url in urls) {
+      var server = await http.get(Uri.parse(url));
+      debugPrint('Server: ${server.statusCode}');
+    }
 
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
       List<dynamic> foodItemJson = json.decode(response.body);
 
-      // Filter items if a search query is provided
       if (searchQuery != null && searchQuery.isNotEmpty) {
         foodItemJson = foodItemJson.where((item) {
           return item['name'].toLowerCase().contains(searchQuery.toLowerCase());
@@ -70,6 +83,8 @@ class _OwnerHomePageState extends State<OwnerHomePage> {
   Future<User> getUserWithEmail() async {
     final email = UserPreferences().getStringValue(Constants.USER_EMAIL, '');
     debugPrint('Email: $email');
+    var server = await http.get(Uri.parse('https://serverrefresher-shokal07.pythonanywhere.com/'));
+    debugPrint('Server: ${server.statusCode}');
     var response = await http.get(
         Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/users/$email'));
     if (response.statusCode == 200) {
@@ -96,7 +111,7 @@ class _OwnerHomePageState extends State<OwnerHomePage> {
         user = fetchedUser; // Update the user state when data is fetched
       });
     });
-    // startTimerDataFetch();
+    startTimerDataFetch();
   }
 
   @override

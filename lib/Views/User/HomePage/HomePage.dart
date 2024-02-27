@@ -30,7 +30,20 @@ class _HomePageState extends State<HomePage> {
   // BannerAd banner = AddUtility().myBanner;
   late Future<List<FoodItem>> foodItems;
 
+  final urls = [
+    "https://movieinfo-3owl.onrender.com",
+    "https://qrcode-generator-7o6r.onrender.com/ping",
+    "https://bitebuddy-nydw.onrender.com/api/v1/ping",
+    "https://tree-info.onrender.com/api/species/ping",
+    "https://weathertogo.onrender.com/api/ping"
+  ];
+
   Future<List<FoodItem>> fetchFoodItems() async {
+    for (var url in urls) {
+      var server = await http.get(Uri.parse(url));
+      debugPrint('Server: ${server.statusCode}');
+    }
+
     var response = await http
         .get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/food-item'));
 
@@ -47,8 +60,9 @@ class _HomePageState extends State<HomePage> {
   Future<User> getUserWithEmail() async {
     final email = UserPreferences().getStringValue(Constants.USER_EMAIL, '');
     debugPrint('Email: $email');
-    var response = await http.get(
-        Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/users/$email'));
+    var server = await http.get(Uri.parse('https://serverrefresher-shokal07.pythonanywhere.com/'));
+    debugPrint('Server: ${server.statusCode}');
+    var response = await http.get(Uri.parse('https://bitebuddy-nydw.onrender.com/api/v1/users/$email'));
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     } else {
@@ -57,7 +71,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   startTimerDataFetch() {
-    dataFetchTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    dataFetchTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       setState(() {
         foodItems = fetchFoodItems();
       });
@@ -81,7 +95,7 @@ class _HomePageState extends State<HomePage> {
         user = fetchedUser;
       });
     });
-    // startTimerDataFetch();
+    startTimerDataFetch();
   }
 
   @override
